@@ -1,0 +1,60 @@
+server:
+  port : 8092
+spring:
+  config:
+    import: classpath:/config/jwt.yaml
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+  datasource:
+    hikari:
+      leak-detection-threshold: 5000
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 50MB
+      max-file-size: 50MB
+      max-request-size: 50MB
+logging:
+  level:
+    root: info
+  interceptor:
+    enabled: false
+cookie:
+  authorization-max-age: 600
+storage:
+  request-files-path: "E:\\Projects\\Storage\\cclog_storage\\requests_files\\"
+springdoc:
+  swagger-ui:
+    path: /docs.html
+  api-docs:
+    path: /api/docs.yaml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: debug
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    hibernate:
+      SQL: debug
+    type:
+      descriptor:
+        sql:
+          BasicBinder: trace
+    root: debug

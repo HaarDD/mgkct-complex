@@ -1,0 +1,26 @@
+version: '3.3'
+services:
+  app:
+    build:
+      context: .
+    container_name: cclog
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cclog?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 96G&yw#Q
+    depends_on:
+      - mysql
+    ports:
+      - '8092:8092'
+    volumes:
+      - ./mysql-data:/var/lib/mysql/data
+
+  mysql:
+    image: mysql:8.0.33
+    container_name: mysql_8033
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'cclog'
+      MYSQL_ROOT_PASSWORD: '96G&yw#Q'
+    ports:
+      - '3306:3306'
