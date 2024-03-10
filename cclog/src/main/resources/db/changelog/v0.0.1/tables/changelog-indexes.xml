@@ -1,0 +1,88 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet author="Maxim Galitskiy" id="indexes-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="requests" indexName="FK_request_install_soft_users_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_request_install_soft_users_id" tableName="requests">
+            <column name="created_by_user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="indexes-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="requests" indexName="FK_request_users_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_request_users_id" tableName="requests">
+            <column name="created_by_user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="indexes-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="requests" indexName="FK_requests_priorities_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_requests_priorities_id" tableName="requests">
+            <column defaultValueNumeric="1" name="priority_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="indexes-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="requests" indexName="FK_requests_request_types_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_requests_request_types_id" tableName="requests">
+            <column name="request_type_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="indexes-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="requests" indexName="FK_requests_statuses_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_requests_statuses_id" tableName="requests">
+            <column defaultValueNumeric="1" name="status_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="indexes-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="roles" indexName="FK_roles_priorities_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_roles_priorities_id" tableName="roles">
+            <column name="priority_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="indexes-7">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="users" indexName="FK_users_roles_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_users_roles_id" tableName="users">
+            <column defaultValueNumeric="1" name="role_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
+
+

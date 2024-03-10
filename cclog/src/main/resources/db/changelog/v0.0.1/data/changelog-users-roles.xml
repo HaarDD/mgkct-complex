@@ -1,0 +1,56 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Maxim Galitskiy" id="data_roles-1">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                SELECT COUNT(*)
+                FROM roles
+                WHERE roles.name = 'EMPLOYEE'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="roles">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="EMPLOYEE"/>
+            <column name="priority_id" valueNumeric="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="data_roles-2">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                SELECT COUNT(*)
+                FROM roles
+                WHERE roles.name = 'ADMINISTRATION'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="roles">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="ADMINISTRATION"/>
+            <column name="priority_id" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="data_roles-3">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                SELECT COUNT(*)
+                FROM roles
+                WHERE roles.name = 'ENGINEER'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="roles">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="ENGINEER"/>
+            <column name="priority_id" valueNumeric="3"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
