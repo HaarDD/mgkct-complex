@@ -1,13 +1,19 @@
 FROM maven:3.8.7-openjdk-18-slim AS build
 LABEL authors="Maxim Galitskiy"
 
-WORKDIR /app
+ENV HOME=/app
 
-COPY pom.xml .
-COPY src ./src
+RUN mkdir -p $HOME
 
-RUN mvn clean package -Dskiptests
+WORKDIR $HOME
 
+ADD pom.xml $HOME
+
+RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "--fail-never"]
+
+ADD . $HOME
+
+RUN ["mvn", "package"]
 
 FROM openjdk:17-slim
 LABEL authors="Maxim Galitskiy"

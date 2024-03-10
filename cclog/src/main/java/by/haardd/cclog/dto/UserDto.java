@@ -1,7 +1,5 @@
 package by.haardd.cclog.dto;
 
-import by.haardd.cclog.dto.RequestDto;
-import by.haardd.cclog.dto.RoleDto;
 import lombok.Value;
 
 import javax.validation.constraints.NotNull;

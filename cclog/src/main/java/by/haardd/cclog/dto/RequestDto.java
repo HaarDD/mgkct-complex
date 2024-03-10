@@ -1,9 +1,5 @@
 package by.haardd.cclog.dto;
 
-import by.haardd.cclog.entity.Priority;
-import by.haardd.cclog.entity.RequestType;
-import by.haardd.cclog.entity.Status;
-import by.haardd.cclog.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
