@@ -1,0 +1,380 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Maxim Galitskiy" id="tables-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="priorities"/>
+            </not>
+        </preConditions>
+        <createTable tableName="priorities">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color_hex" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="request_field_types"/>
+            </not>
+        </preConditions>
+        <createTable tableName="request_field_types">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="request_types"/>
+            </not>
+        </preConditions>
+        <createTable tableName="request_types">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="readable_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="request_types_fields_types"/>
+            </not>
+        </preConditions>
+        <createTable tableName="request_types_fields_types">
+            <column name="request_type_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="field_type_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="requests"/>
+            </not>
+        </preConditions>
+        <createTable tableName="requests">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="request_type_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="json" type="TEXT"/>
+            <column name="deadline_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by_user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="priority_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="status_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="engineer_comment" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="roles">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-7">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="statuses"/>
+            </not>
+        </preConditions>
+        <createTable tableName="statuses">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="readable_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color_hex" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-8">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="users">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="login" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="refresh_token" type="VARCHAR(255)"/>
+            <column defaultValueComputed="now() + interval 30 day" name="refresh_token_expiration" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP" name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-9">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="priorities"/>
+            </not>
+        </preConditions>
+        <createTable tableName="priorities">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color_hex" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-10">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="request_field_types"/>
+            </not>
+        </preConditions>
+        <createTable tableName="request_field_types">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-11">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="request_types"/>
+            </not>
+        </preConditions>
+        <createTable tableName="request_types">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="readable_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-12">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="request_types_fields_types"/>
+            </not>
+        </preConditions>
+        <createTable tableName="request_types_fields_types">
+            <column name="request_type_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="field_type_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-13">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="requests"/>
+            </not>
+        </preConditions>
+        <createTable tableName="requests">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="request_type_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="json" type="TEXT"/>
+            <column name="deadline_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by_user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="priority_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="status_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="engineer_comment" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-14">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="roles">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-15">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="statuses"/>
+            </not>
+        </preConditions>
+        <createTable tableName="statuses">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="readable_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color_hex" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-16">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="users">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="login" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="refresh_token" type="VARCHAR(255)"/>
+            <column defaultValueComputed="now() + interval 30 day" name="refresh_token_expiration" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP" name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

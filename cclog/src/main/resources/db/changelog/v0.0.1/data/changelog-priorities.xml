@@ -1,0 +1,79 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Maxim Galitskiy" id="data_priorities-1">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                SELECT COUNT(*)
+                FROM priorities
+                WHERE priorities.name = 'NORMAL'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="priorities">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="NORMAL"/>
+            <column name="value" valueNumeric="100"/>
+            <column name="color_hex" value="D3FFCE"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="data_priorities-2">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                SELECT COUNT(*)
+                FROM priorities
+                WHERE priorities.name = 'HIGH'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="priorities">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="HIGH"/>
+            <column name="value" valueNumeric="500"/>
+            <column name="color_hex" value="FFF68F"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="data_priorities-3">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                SELECT COUNT(*)
+                FROM priorities
+                WHERE priorities.name = 'CRITICAL'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="priorities">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="CRITICAL"/>
+            <column name="value" valueNumeric="1000"/>
+            <column name="color_hex" value="FF6600"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="data_priorities-4">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                SELECT COUNT(*)
+                FROM priorities
+                WHERE priorities.name = 'BLOCKING'
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="priorities">
+            <column name="id" valueNumeric="4"/>
+            <column name="name" value="BLOCKING"/>
+            <column name="value" valueNumeric="10000"/>
+            <column name="color_hex" value="FF0000"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
+
+
+

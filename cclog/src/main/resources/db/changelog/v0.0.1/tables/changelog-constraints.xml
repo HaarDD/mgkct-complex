@@ -1,0 +1,113 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Maxim Galitskiy" id="constraints-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="request_types_fields_types"
+                                            foreignKeyName="FK_request_types_fields_types_request_field_types_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="field_type_id" baseTableName="request_types_fields_types"
+                                 constraintName="FK_request_types_fields_types_request_field_types_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="id" referencedTableName="request_field_types"/>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="constraints-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="request_types_fields_types"
+                                            foreignKeyName="FK_request_types_fields_types_request_types_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="request_type_id" baseTableName="request_types_fields_types"
+                                 constraintName="FK_request_types_fields_types_request_types_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="id" referencedTableName="request_types"/>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="constraints-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="requests"
+                                            foreignKeyName="FK_request_users_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="created_by_user_id" baseTableName="requests"
+                                 constraintName="FK_request_users_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="constraints-4">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="requests"
+                                            foreignKeyName="FK_requests_priorities_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="priority_id" baseTableName="requests"
+                                 constraintName="FK_requests_priorities_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="priorities"/>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="constraints-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="requests"
+                                            foreignKeyName="FK_requests_request_types_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="request_type_id" baseTableName="requests"
+                                 constraintName="FK_requests_request_types_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="id" referencedTableName="request_types"/>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="constraints-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="requests"
+                                            foreignKeyName="FK_requests_statuses_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="status_id" baseTableName="requests"
+                                 constraintName="FK_requests_statuses_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="statuses"/>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="constraints-7">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="roles"
+                                            foreignKeyName="FK_roles_priorities_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="priority_id" baseTableName="roles"
+                                 constraintName="FK_roles_priorities_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="priorities"/>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="constraints-8">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="users"
+                                            foreignKeyName="FK_users_roles_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="users" constraintName="FK_users_roles_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="id" referencedTableName="roles"/>
+    </changeSet>
+
+</databaseChangeLog>
+
+
