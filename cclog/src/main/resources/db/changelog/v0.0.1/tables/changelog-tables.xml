@@ -362,7 +362,8 @@
             <column name="first_name" type="VARCHAR(50)"/>
             <column name="last_name" type="VARCHAR(50)"/>
             <column name="refresh_token" type="VARCHAR(255)"/>
-            <column defaultValueComputed="now() + interval 30 day" name="refresh_token_expiration" type="timestamp">
+            <column defaultValueComputed="now() + interval 30 day" name="refresh_token_expiration" type="timestamp"/>
+            <column defaultValueNumeric="1" name="user_status_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column defaultValueNumeric="1" name="role_id" type="BIGINT">
@@ -373,6 +374,22 @@
             </column>
             <column defaultValueComputed="CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP" name="updated_at" type="timestamp">
                 <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Maxim Galitskiy" id="tables-17">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_statuses"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user_statuses">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
     </changeSet>

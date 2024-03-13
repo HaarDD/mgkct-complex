@@ -83,6 +83,18 @@
         </createIndex>
     </changeSet>
 
+
+    <changeSet author="Maxim Galitskiy" id="indexes-8">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="users" indexName="FK_users_user_statuses_id"/>
+            </not>
+        </preConditions>
+        <createIndex associatedWith="" indexName="FK_users_user_statuses_id" tableName="users">
+            <column defaultValueNumeric="1" name="user_status_id"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
 
 
