@@ -27,7 +27,7 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public StatusDto getById(Long id) {
-        return statusMapper.toDto(statusRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Status was not found", id)));
+        return statusMapper.toDto(statusRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Status was not found", id.toString())));
     }
 
     @Override

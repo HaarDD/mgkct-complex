@@ -27,7 +27,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto getById(Long id) {
-        return requestMapper.toDto(requestRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Request was not found", id)));
+        return requestMapper.toDto(requestRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Request was not found", id.toString())));
     }
 
     @Override
