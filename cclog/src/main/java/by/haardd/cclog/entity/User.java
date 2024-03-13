@@ -2,6 +2,8 @@ package by.haardd.cclog.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -52,24 +54,28 @@ public class User {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    @NotNull
     @Column(name = "refresh_token_expiration", nullable = false)
-    private Instant refreshTokenExpiration;
+    private Timestamp refreshTokenExpiration;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @NotNull
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @CreationTimestamp
+    private Timestamp createdAt;
 
-    @NotNull
     @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+    @UpdateTimestamp
+    private Timestamp updatedAt;
 
     @OneToMany(mappedBy = "createdByUser")
     private Set<Request> requests = new LinkedHashSet<>();
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_status_id", nullable = false)
+    private UserStatus userStatus;
 
 }
