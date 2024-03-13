@@ -5,10 +5,12 @@ import lombok.Getter;
 @Getter
 public class ResourceNotFoundException extends RuntimeException {
 
-    private final Long id;
+    private final static String code = "RESOURCE_NOT_FOUND"; //TODO перейти на использовние этого
 
-    public ResourceNotFoundException(String message, Long id) {
+    private final String findValue;
+
+    public ResourceNotFoundException(String message, String findValue) {
         super(message);
-        this.id = id;
+        this.findValue = findValue;
     }
 }
