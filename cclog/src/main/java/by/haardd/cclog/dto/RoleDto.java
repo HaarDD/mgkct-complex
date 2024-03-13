@@ -16,6 +16,6 @@ public class RoleDto implements Serializable {
 
     PriorityDto priority;
 
-    Set<UserDto> users;
+    Set<RegisterUserDto> users;
 
 }

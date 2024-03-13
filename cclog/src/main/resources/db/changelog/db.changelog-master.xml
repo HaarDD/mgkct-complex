@@ -10,4 +10,5 @@
     <include file="v0.0.1/data/changelog-priorities.xml" relativeToChangelogFile="true"/>
     <include file="v0.0.1/data/changelog-statuses.xml" relativeToChangelogFile="true"/>
     <include file="v0.0.1/data/changelog-users-roles.xml" relativeToChangelogFile="true"/>
+    <include file="v0.0.1/data/changelog-user-statuses.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

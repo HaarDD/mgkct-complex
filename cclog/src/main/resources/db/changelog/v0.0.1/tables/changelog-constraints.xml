@@ -108,6 +108,19 @@
                                  referencedColumnNames="id" referencedTableName="roles"/>
     </changeSet>
 
+    <changeSet author="Maxim Galitskiy" id="constraints-9">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="users"
+                                            foreignKeyName="FK_users_user_statuses_id"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="user_status_id" baseTableName="users"
+                                 constraintName="FK_users_user_statuses_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="user_statuses"/>
+    </changeSet>
+
 </databaseChangeLog>
 
 

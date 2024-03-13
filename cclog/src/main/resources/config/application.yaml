@@ -2,7 +2,7 @@ server:
   port : 8092
 spring:
   config:
-    import: classpath:/config/jwt.yaml
+    import: classpath:/config/auth.yaml
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html

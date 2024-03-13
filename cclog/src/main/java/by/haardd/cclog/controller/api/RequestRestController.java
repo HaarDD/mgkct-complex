@@ -2,6 +2,7 @@ package by.haardd.cclog.controller.api;
 
 
 import by.haardd.cclog.config.pageable.OffsetLimitPageable;
+import by.haardd.cclog.config.pageable.PageableUtils;
 import by.haardd.cclog.dto.RequestDto;
 import by.haardd.cclog.service.RequestService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,8 +27,8 @@ public class RequestRestController {
     private final RequestService requestService;
 
     @GetMapping
-    private List<RequestDto> getAll(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Long offset){
-        return requestService.getAllByPageable(OffsetLimitPageable.of(offset < 0 ? 0L : offset, limit > 10 ? 10 : limit, Sort.by(Sort.Direction.ASC, "id")));
+    private List<RequestDto> getAll(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Long offset) {
+        return requestService.getAllByPageable(OffsetLimitPageable.of(PageableUtils.calcOffset(offset), PageableUtils.calcLimit(limit), Sort.by(Sort.Direction.ASC, "id")));
     }
 
 

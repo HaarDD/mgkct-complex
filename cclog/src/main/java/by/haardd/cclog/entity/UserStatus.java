@@ -1,6 +1,6 @@
 package by.haardd.cclog.entity;
 
-import by.haardd.cclog.entity.enums.RoleNameEnum;
+import by.haardd.cclog.entity.enums.UserStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,12 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -24,9 +21,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "roles")
-public class Role {
-
+@Table(name = "user_statuses")
+public class UserStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -36,14 +32,9 @@ public class Role {
     @NotNull
     @Column(name = "name", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
-    private RoleNameEnum name;
+    private UserStatusEnum name;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "priority_id", nullable = false)
-    private Priority priority;
-
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "userStatus")
     private Set<User> users = new LinkedHashSet<>();
 
 }

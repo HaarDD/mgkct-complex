@@ -10,13 +10,13 @@
             <sqlCheck expectedResult="0"><![CDATA[
                 SELECT COUNT(*)
                 FROM roles
-                WHERE roles.name = 'EMPLOYEE'
+                WHERE roles.name = 'ROLE_EMPLOYEE'
                 ]]>
             </sqlCheck>
         </preConditions>
         <insert tableName="roles">
             <column name="id" valueNumeric="1"/>
-            <column name="name" value="EMPLOYEE"/>
+            <column name="name" value="ROLE_EMPLOYEE"/>
             <column name="priority_id" valueNumeric="1"/>
         </insert>
     </changeSet>
@@ -26,13 +26,13 @@
             <sqlCheck expectedResult="0"><![CDATA[
                 SELECT COUNT(*)
                 FROM roles
-                WHERE roles.name = 'ADMINISTRATION'
+                WHERE roles.name = 'ROLE_ADMINISTRATION'
                 ]]>
             </sqlCheck>
         </preConditions>
         <insert tableName="roles">
             <column name="id" valueNumeric="2"/>
-            <column name="name" value="ADMINISTRATION"/>
+            <column name="name" value="ROLE_ADMINISTRATION"/>
             <column name="priority_id" valueNumeric="2"/>
         </insert>
     </changeSet>
@@ -42,13 +42,13 @@
             <sqlCheck expectedResult="0"><![CDATA[
                 SELECT COUNT(*)
                 FROM roles
-                WHERE roles.name = 'ENGINEER'
+                WHERE roles.name = 'ROLE_ENGINEER'
                 ]]>
             </sqlCheck>
         </preConditions>
         <insert tableName="roles">
             <column name="id" valueNumeric="3"/>
-            <column name="name" value="ENGINEER"/>
+            <column name="name" value="ROLE_ENGINEER"/>
             <column name="priority_id" valueNumeric="3"/>
         </insert>
     </changeSet>
