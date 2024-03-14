@@ -168,7 +168,7 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="login" type="VARCHAR(50)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
