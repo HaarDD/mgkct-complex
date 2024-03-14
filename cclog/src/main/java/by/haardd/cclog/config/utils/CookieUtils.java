@@ -29,6 +29,6 @@ public class CookieUtils {
     }
 
     public static ResponseCookie getCleanCookie(String cookieName, String path) {
-        return ResponseCookie.from(cookieName, "").path(path).build();
+        return ResponseCookie.from(cookieName, "").path(path).maxAge(0).build();
     }
 }

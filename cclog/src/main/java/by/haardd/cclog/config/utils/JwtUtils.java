@@ -1,7 +1,7 @@
 package by.haardd.cclog.config.utils;
 
 import by.haardd.cclog.entity.enums.RoleNameEnum;
-import by.haardd.cclog.exception.types.TokenInvalidException;
+import by.haardd.cclog.exception.types.extended.TokenInvalidException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -48,7 +48,6 @@ public class JwtUtils {
     private static final String JWT_TOKEN_CLAIM = "token";
     private static final String JWT_PRIVILEGE_CLAIM = "privilege";
     private final Duration jwtAuthExpiration;
-
     private final JWSSigner jwtSigner;
     private final JWSVerifier jwtVerifier;
     private final String jwtAuthCookieName;
@@ -64,6 +63,9 @@ public class JwtUtils {
     }
 
     public ResponseCookie generateJwtTokenCookie(String issuer, Authentication authentication) {
+        if (authentication.getName().equals("anonymousUser")) {
+            throw new RuntimeException("Token cannot be generated for an anonymous user!");
+        }
         String jwt = generateToken(issuer, authentication, jwtAuthExpiration);
         return CookieUtils.generateCookie(jwtAuthCookieName, jwt, API_URL, jwtAuthExpiration);
     }
