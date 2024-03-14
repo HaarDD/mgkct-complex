@@ -24,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -37,13 +38,13 @@ import java.util.stream.Collectors;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     public final static String API_URL = "/api";
-    public final static String AUTH_URL = "/api/auth";
-    public final static String LOGOUT_URL = "/api/logout";
-    public final static String REFRESH_URL = "/api/refresh";
+    public final static String AUTH_URL = "/api/auth/login";
+    public final static String LOGOUT_URL = "/api/auth/logout";
+    public final static String REFRESH_URL = "/api/auth/refresh";
+    public final static String SIGNUP_ADMIN_WITH_CODE ="/api/auth/signup_admin";
+    public final static String SIGNUP_USER_WITH_CODE ="/api/auth/signup";
 
-    public final static String SIGNUP_ADMIN_WITH_CODE ="/api/signup";
-
-    //private AuthEntryPointJwt unauthorizedHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     private final UserDetailsService userDetailsService;
 
@@ -62,18 +63,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                //.exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-                //.and()
+                .httpBasic().disable()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
-                .antMatchers(AUTH_URL).permitAll()
-                .antMatchers(REFRESH_URL).permitAll()
-                .antMatchers(LOGOUT_URL).permitAll()
-                .antMatchers(SIGNUP_ADMIN_WITH_CODE).permitAll()
-                .anyRequest().authenticated();
+                .authorizeHttpRequests(
+                        auths -> auths
+                                .antMatchers(AUTH_URL, REFRESH_URL, SIGNUP_ADMIN_WITH_CODE, SIGNUP_USER_WITH_CODE).permitAll()
+                                .anyRequest().authenticated()
+                                .and()
+                                .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                );
 
-        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

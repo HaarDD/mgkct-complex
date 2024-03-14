@@ -1,7 +1,7 @@
 package by.haardd.cclog.config.security.filter;
 
 import by.haardd.cclog.config.utils.JwtUtils;
-import by.haardd.cclog.exception.types.TokenInvalidException;
+import by.haardd.cclog.exception.types.extended.TokenInvalidException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
