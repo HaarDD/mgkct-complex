@@ -1,7 +1,6 @@
 package by.haardd.cclog.service.impl;
 
 import by.haardd.cclog.config.security.UserPrincipal;
-import by.haardd.cclog.exception.types.ResourceNotFoundException;
 import by.haardd.cclog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

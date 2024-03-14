@@ -17,4 +17,5 @@ public interface RequestService {
 
     void delete(Long id);
 
+    boolean isUserHasPermission(Long id);
 }

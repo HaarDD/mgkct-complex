@@ -1,7 +1,7 @@
 package by.haardd.cclog.service.impl;
 
 import by.haardd.cclog.dto.StatusDto;
-import by.haardd.cclog.exception.types.ResourceNotFoundException;
+import by.haardd.cclog.exception.types.extended.ResourceNotFoundException;
 import by.haardd.cclog.mapper.StatusMapper;
 import by.haardd.cclog.repository.StatusRepository;
 import by.haardd.cclog.service.StatusService;
