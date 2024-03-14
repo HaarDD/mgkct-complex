@@ -10,6 +10,8 @@ import java.util.Set;
 @Value
 public class RequestTypeDto implements Serializable {
 
+    Long id;
+
     @NotNull
     @Size(max = 50)
     String name;
@@ -19,8 +21,6 @@ public class RequestTypeDto implements Serializable {
     String readableName;
 
     String description;
-
-    Set<RequestDto> requests;
 
     Set<RequestFieldTypeDto> requestFieldTypes;
 }

@@ -23,6 +23,4 @@ public class PriorityDto implements Serializable {
 
     Set<RequestDto> requests;
 
-    Set<RoleDto> roles;
-
 }

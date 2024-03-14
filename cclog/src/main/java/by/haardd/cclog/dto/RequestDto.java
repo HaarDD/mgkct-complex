@@ -7,6 +7,7 @@ import lombok.Value;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @Value
@@ -25,23 +26,24 @@ public class RequestDto implements Serializable {
     String json;
 
     @NotNull
-    Instant deadlineDate;
+    Timestamp deadlineDate;
 
-    @NotNull
-    Instant createdAt;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Timestamp createdAt;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     String engineerComment;
 
     @NotNull
     RequestTypeDto requestType;
 
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     RegisterUserDto createdByUser;
 
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     PriorityDto priority;
 
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     StatusDto status;
 
 }

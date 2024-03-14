@@ -35,6 +35,4 @@ public class RegisterUserDto implements Serializable {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Timestamp updatedAt;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Set<RequestDto> requests;
 }

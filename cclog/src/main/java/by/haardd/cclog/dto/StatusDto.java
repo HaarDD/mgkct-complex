@@ -22,5 +22,4 @@ public class StatusDto implements Serializable {
     @Size(max = 6)
     String colorHex;
 
-    Set<RequestDto> requests;
 }
