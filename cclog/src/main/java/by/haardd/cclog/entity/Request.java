@@ -2,6 +2,7 @@ package by.haardd.cclog.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -48,7 +49,7 @@ public class Request {
 
     @NotNull
     @Column(name = "deadline_date", nullable = false)
-    private Instant deadlineDate;
+    private Timestamp deadlineDate;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -65,9 +66,9 @@ public class Request {
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 
-    @NotNull
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @CreationTimestamp
+    private Timestamp createdAt;
 
     @Type(type = "text")
     @Column(name = "engineer_comment")

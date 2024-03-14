@@ -1,10 +1,13 @@
 package by.haardd.cclog.entity;
 
+import by.haardd.cclog.entity.enums.StatusEnum;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +32,8 @@ public class Status {
     @Size(max = 50)
     @NotNull
     @Column(name = "name", nullable = false, length = 50)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum name;
 
     @Size(max = 255)
     @NotNull
