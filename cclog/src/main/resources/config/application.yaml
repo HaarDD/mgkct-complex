@@ -58,3 +58,13 @@ logging:
         sql:
           BasicBinder: trace
     root: debug
+
+
+---
+server:
+  port : 8093
+spring:
+  config:
+    activate:
+      on-profile: no_docker
+    import: classpath:/config/database.yaml
