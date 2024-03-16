@@ -1,14 +1,17 @@
 package by.haardd.cclog.service;
 
+import by.haardd.cclog.dto.UserStatusDto;
+
+import java.util.List;
+
 public interface UserStatusService {
-/*
-    List<StatusDto> getAllByPageable(Pageable pageable);
+    List<UserStatusDto> getAll();
 
-    StatusDto getById(Long id);
+    UserStatusDto getById(Long id);
 
-    StatusDto save(StatusDto statusDto);
+    UserStatusDto save(UserStatusDto userStatusDto);
 
-    StatusDto update(StatusDto statusDto, Long id);
+    UserStatusDto update(UserStatusDto userStatusDto, Long id);
 
-    void delete(Long id);*/
+    void delete(Long id);
 }

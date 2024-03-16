@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDto getById(Long id);
 
-    UserDto getByRefreshToken(String refreshToken);
+    String getRefreshTokenByLogin(String login);
 
     Timestamp getRefreshTokenExpirationDateByLogin(String login);
 
