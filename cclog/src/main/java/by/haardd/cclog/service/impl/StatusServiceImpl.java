@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class StatusServiceImpl implements StatusService {
     private final StatusMapper statusMapper;
 
     @Override
-    public List<StatusDto> getAllByPageable(Pageable pageable) {
-        return statusRepository.findAll(pageable).stream().map(statusMapper::toDto).toList();
+    public List<StatusDto> getAll() {
+        return statusRepository.findAll().stream().map(statusMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
@@ -33,18 +34,20 @@ public class StatusServiceImpl implements StatusService {
     @Override
     @Transactional
     public StatusDto save(StatusDto statusDto) {
-        return null;
+        return statusMapper.toDto(statusRepository.save(statusMapper.toEntity(statusDto)));
     }
 
     @Override
     @Transactional
     public StatusDto update(StatusDto statusDto, Long id) {
-        return null;
+        return statusMapper.toDto(statusRepository
+                .save(statusMapper.partialUpdate(statusDto, statusRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Status was not found", id.toString())))));
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-
+        statusRepository.deleteById(id);
     }
 }
