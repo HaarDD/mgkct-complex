@@ -4,6 +4,7 @@ import by.haardd.cclog.config.utils.JwtUtils;
 import by.haardd.cclog.config.utils.RefreshTokenUtils;
 import by.haardd.cclog.config.security.AuthenticationRequest;
 import by.haardd.cclog.dto.RegisterUserDto;
+import by.haardd.cclog.exception.types.extended.TokenInvalidException;
 import by.haardd.cclog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,8 +45,6 @@ public class AuthenticationRestController {
     private final RefreshTokenUtils refreshTokenUtils;
 
     private final UserService userService;
-
-    private final UserDetailsService userDetailsService;
 
     @PostMapping(AUTH_URL)
     public ResponseEntity<String> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) {
@@ -96,12 +95,19 @@ public class AuthenticationRestController {
         String refreshToken = refreshTokenUtils.getRefreshTokenFromCookies(request);
 
         if (StringUtils.isBlank(refreshToken)) {
-            return ResponseEntity.badRequest().body("Refresh Token is empty!");
+            return ResponseEntity.badRequest().body("Refresh Token is empty");
+        }
+        UserDetails userDetails;
+        try {
+            userDetails = jwtUtils.getTokenClaims(jwtUtils.getJwtTokenFromCookies(request));
+            if (userDetails == null) throw new RuntimeException();
+        } catch (Exception e) {
+            throw new TokenInvalidException("Invalid token");
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userService.getByRefreshToken(refreshToken).getLogin());
+        refreshTokenUtils.verifyRefreshToken(userDetails.getUsername(), refreshTokenUtils.getRefreshTokenFromCookies(request));
 
-        ResponseCookie refreshCookie = refreshTokenUtils.generateRefreshCookieByVerifyingRefreshToken(userDetails.getUsername());
+        ResponseCookie refreshCookie = refreshTokenUtils.generateRefreshCookie(userDetails.getUsername());
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -110,10 +116,11 @@ public class AuthenticationRestController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtTokenCookie(AuthenticationRestController.class.getSimpleName(), authentication);
+        ResponseCookie accessCookie = jwtUtils.generateJwtTokenCookie(AuthenticationRestController.class.getSimpleName(), authentication);
+
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
         headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return ResponseEntity.ok()

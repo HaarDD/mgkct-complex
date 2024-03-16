@@ -1,6 +1,6 @@
 package by.haardd.cclog.config;
 
-import by.haardd.cclog.config.security.filter.JwtTokenFilter;
+import by.haardd.cclog.config.security.filter.AccessTokenFilter;
 import by.haardd.cclog.entity.enums.RoleNameEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +27,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,14 +46,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public final static String AUTH_URL = "/api/auth/login";
     public final static String LOGOUT_URL = "/api/auth/logout";
     public final static String REFRESH_URL = "/api/auth/refresh";
-    public final static String SIGNUP_ADMIN_WITH_CODE ="/api/auth/signup_admin";
-    public final static String SIGNUP_USER_WITH_CODE ="/api/auth/signup";
+    public final static String SIGNUP_ADMIN_WITH_CODE = "/api/auth/signup_admin";
+    public final static String SIGNUP_USER_WITH_CODE = "/api/auth/signup";
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
     private final UserDetailsService userDetailsService;
 
-    private final JwtTokenFilter jwtTokenFilter;
+    private final AccessTokenFilter jwtTokenFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -62,12 +67,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .httpBasic().disable()
+        http.cors().and().csrf().disable().httpBasic().disable()
+                .headers().httpStrictTransportSecurity().disable().and()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                //.requiresChannel(channel ->  channel.anyRequest().requiresSecure())
                 .authorizeHttpRequests(
                         auths -> auths
                                 .antMatchers(AUTH_URL, REFRESH_URL, SIGNUP_ADMIN_WITH_CODE, SIGNUP_USER_WITH_CODE).permitAll()
@@ -76,7 +82,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                                 .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 );
 
-        //http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(new CorsFilter(corsConfigurationSource()), UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:5173","http://localhost:5174"));
+
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+
+        config.addAllowedHeader("Set-Cookie");
+        config.addAllowedHeader("*");
+
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
@@ -88,7 +112,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -114,6 +137,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (UsernamePasswordAuthenticationToken) authentication;
     }
-
 
 }

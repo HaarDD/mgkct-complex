@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtTokenFilter extends OncePerRequestFilter {
+public class AccessTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
 
