@@ -40,7 +40,7 @@
         </preConditions>
         <addForeignKeyConstraint baseColumnNames="created_by_user_id" baseTableName="requests"
                                  constraintName="FK_request_users_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 onDelete="CASCADE" onUpdate="RESTRICT" referencedColumnNames="id"
                                  referencedTableName="users"/>
     </changeSet>
 
