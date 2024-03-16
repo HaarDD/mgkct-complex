@@ -3,7 +3,9 @@ package by.haardd.cclog.controller.api;
 
 import by.haardd.cclog.config.pageable.OffsetLimitPageable;
 import by.haardd.cclog.config.pageable.PageableUtils;
+import by.haardd.cclog.dto.PriorityDto;
 import by.haardd.cclog.dto.RequestDto;
+import by.haardd.cclog.dto.StatusDto;
 import by.haardd.cclog.service.RequestService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Slf4j
@@ -41,22 +45,43 @@ public class RequestRestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RequestDto create(@Valid @RequestBody RequestDto requestDto){
+    public RequestDto create(@Valid @RequestBody RequestDto requestDto) {
         return requestService.save(requestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER') or @requestServiceImpl.isUserHasPermission(#id)")
-    public RequestDto update(@Valid @RequestBody RequestDto requestDto, @PathVariable Long id){
-        return requestService.update(requestDto,id);
+    public RequestDto update(@Valid @RequestBody RequestDto requestDto, @PathVariable Long id) {
+        return requestService.update(requestDto, id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER') or @requestServiceImpl.isUserHasPermission(#id)")
-    public void delete(@PathVariable Long id){
+    public void delete(@PathVariable Long id) {
         requestService.delete(id);
+    }
+
+    @PatchMapping("/comment/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public void addEngineerComment(@Valid @Size(max = 300) @RequestBody String comment, @PathVariable Long id) {
+        requestService.addEngineerComment(comment, id);
+    }
+
+    @PatchMapping("/status/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public void setStatus(@RequestBody StatusDto statusDto, @PathVariable Long id) {
+        requestService.setStatus(statusDto, id);
+    }
+
+    @PatchMapping("/priority/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public void setPriority(@RequestBody PriorityDto priorityDto, @PathVariable Long id) {
+        requestService.setPriority(priorityDto, id);
     }
 
 

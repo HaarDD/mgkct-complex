@@ -24,8 +24,8 @@ public class StatusRestController {
     private final StatusService statusService;
 
     @GetMapping
-    private List<StatusDto> getAll(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Long offset){
-        return statusService.getAllByPageable(OffsetLimitPageable.of(offset < 0 ? 0L : offset, limit > 10 ? 10 : limit, Sort.by(Sort.Direction.ASC, "id")));
+    private List<StatusDto> getAll(){
+        return statusService.getAll();
     }
 
 
