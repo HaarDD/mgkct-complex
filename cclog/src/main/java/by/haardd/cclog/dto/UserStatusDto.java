@@ -1,28 +1,18 @@
 package by.haardd.cclog.dto;
 
+import by.haardd.cclog.entity.enums.UserStatusEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Set;
 
 @Value
-public class PriorityDto implements Serializable {
+public class UserStatusDto implements Serializable {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long id;
 
     @NotNull
-    @Size(max = 50)
-    String name;
-
-    @NotNull
-    Long value;
-
-    @NotNull
-    @Size(max = 6)
-    String colorHex;
-
+    UserStatusEnum name;
 }
