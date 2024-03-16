@@ -64,13 +64,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getByRefreshToken(String refreshToken) {
-        return userMapper.toDto(userRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new TokenInvalidException("Token was invalid!")));
+    public String getRefreshTokenByLogin(String login) {
+        return userRepository.findByLogin(login).orElseThrow(() -> new TokenInvalidException("Token was invalid!")).getRefreshToken();
     }
 
     @Override
     public Timestamp getRefreshTokenExpirationDateByLogin(String login) {
-        return userRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException("User was not found", login)).getRefreshTokenExpiration();
+        return userRepository.findByLogin(login).orElseThrow(() -> new TokenInvalidException("Token was invalid!")).getRefreshTokenExpiration();
     }
 
     @Override
@@ -113,7 +113,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
-
     @Override
     @Transactional
     public void updateRefreshTokenByLogin(String login, String newRefreshToken, Timestamp newTokenExpirationDate) {
@@ -136,7 +135,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
     @Override
     @Transactional
     public UserDto update(RegisterUserDto registerUserDto, Long id) {
@@ -148,6 +146,5 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         //TODO
     }
-
-
+    
 }
