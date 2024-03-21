@@ -1,7 +1,7 @@
 package by.haardd.cclog.config.utils;
 
 import by.haardd.cclog.entity.enums.RoleNameEnum;
-import by.haardd.cclog.exception.types.TokenInvalidException;
+import by.haardd.cclog.exception.types.extended.TokenInvalidException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -47,33 +47,38 @@ public class JwtUtils {
     private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
     private static final String JWT_TOKEN_CLAIM = "token";
     private static final String JWT_PRIVILEGE_CLAIM = "privilege";
-    private final Duration jwtAuthExpiration;
-
+    private final Duration accessTokenExpiration;
     private final JWSSigner jwtSigner;
     private final JWSVerifier jwtVerifier;
-    private final String jwtAuthCookieName;
+    private final String accessTokenCookieName;
+    private final Duration authCookieExpiration;
 
     @SneakyThrows
     public JwtUtils(@Value("${jwt.secret}") String jwtSecret,
-                    @Value("${jwt.auth-expiration}") Duration jwtAuthExpiration,
-                    @Value("${jwt.auth-cookie-name}") String jwtAuthCookieName) {
-        this.jwtAuthExpiration = jwtAuthExpiration;
-        this.jwtAuthCookieName = jwtAuthCookieName;
+                    @Value("${jwt.access-expiration}") Duration accessTokenExpiration,
+                    @Value("${jwt.access-cookie-name}") String accessTokenCookieName,
+                    @Value("${jwt.auth-cookie-expiration}") Duration authCookieExpiration) {
+        this.accessTokenExpiration = accessTokenExpiration;
+        this.accessTokenCookieName = accessTokenCookieName;
         this.jwtSigner = new MACSigner(jwtSecret);
         this.jwtVerifier = new MACVerifier(jwtSecret);
+        this.authCookieExpiration = authCookieExpiration;
     }
 
     public ResponseCookie generateJwtTokenCookie(String issuer, Authentication authentication) {
-        String jwt = generateToken(issuer, authentication, jwtAuthExpiration);
-        return CookieUtils.generateCookie(jwtAuthCookieName, jwt, API_URL, jwtAuthExpiration);
+        if (authentication.getName().equals("anonymousUser")) {
+            throw new RuntimeException("Token cannot be generated for an anonymous user!");
+        }
+        String jwt = generateToken(issuer, authentication, accessTokenExpiration);
+        return CookieUtils.generateCookie(accessTokenCookieName, jwt, API_URL, authCookieExpiration);
     }
 
     public String getJwtTokenFromCookies(HttpServletRequest request) {
-        return CookieUtils.getCookieValueByName(request, jwtAuthCookieName);
+        return CookieUtils.getCookieValueByName(request, accessTokenCookieName);
     }
 
     public ResponseCookie getCleanJwtTokenCookie() {
-        return CookieUtils.getCleanCookie(jwtAuthCookieName, API_URL);
+        return CookieUtils.getCleanCookie(accessTokenCookieName, API_URL);
     }
 
     @SneakyThrows
@@ -105,14 +110,7 @@ public class JwtUtils {
             final SignedJWT decodedJWT = SignedJWT.parse(token);
 
             if (decodedJWT.verify(jwtVerifier) && isValid(jwtClaims = decodedJWT.getJWTClaimsSet())) {
-                String userName = decodedJWT.getJWTClaimsSet().getSubject();
-                final Stream<RoleNameEnum> userRights = this.<List<String>>getClaim(jwtClaims, JWT_PRIVILEGE_CLAIM)
-                        .map(list -> list.stream().map(RoleNameEnum::valueOf))
-                        .orElse(Stream.empty());
-                return new User(userName, StringUtils.EMPTY, userRights.map(RoleNameEnum::name)
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList())
-                );
+                return getUserDetails(jwtClaims, decodedJWT);
             } else {
                 throw new TokenInvalidException("Token was invalid!");
             }
@@ -120,6 +118,35 @@ public class JwtUtils {
             throw new TokenInvalidException("Token was invalid!");
         }
     }
+
+    @Nullable
+    public UserDetails getTokenClaimsWithoutValidation(String token) throws JOSEException {
+        final JWTClaimsSet jwtClaims;
+        try {
+            final SignedJWT decodedJWT = SignedJWT.parse(token);
+
+            if (decodedJWT.verify(jwtVerifier)) {
+                jwtClaims = decodedJWT.getJWTClaimsSet();
+                return getUserDetails(jwtClaims, decodedJWT);
+            } else {
+                throw new TokenInvalidException("Token was invalid!");
+            }
+        } catch (ParseException pe) {
+            throw new TokenInvalidException("Token was invalid!");
+        }
+    }
+
+    private UserDetails getUserDetails(JWTClaimsSet jwtClaims, SignedJWT decodedJWT) throws ParseException {
+        String userName = decodedJWT.getJWTClaimsSet().getSubject();
+        final Stream<RoleNameEnum> userRights = this.<List<String>>getClaim(jwtClaims, JWT_PRIVILEGE_CLAIM)
+                .map(list -> list.stream().map(RoleNameEnum::valueOf))
+                .orElse(Stream.empty());
+        return new User(userName, StringUtils.EMPTY, userRights.map(RoleNameEnum::name)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList())
+        );
+    }
+
 
     @SuppressWarnings("unchecked")
     private <T> Optional<T> getClaim(JWTClaimsSet jwtClaims, String claim) {

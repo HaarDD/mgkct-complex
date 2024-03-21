@@ -2,11 +2,11 @@ package by.haardd.cclog.service;
 
 import by.haardd.cclog.dto.RegisterUserDto;
 import by.haardd.cclog.dto.UserDto;
+import by.haardd.cclog.entity.enums.RoleNameEnum;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface UserService {
@@ -15,17 +15,25 @@ public interface UserService {
 
     UserDto getById(Long id);
 
-    UserDto save(RegisterUserDto registerUserDto);
+    UserDto getByLogin(String login);
+
+    String getRefreshTokenByLogin(String login);
+
+    Timestamp getRefreshTokenExpirationDateByLogin(String login);
+
+    UserDto save(RegisterUserDto registerUserDto, RoleNameEnum roleName);
 
     UserDto saveWithAdminKey(RegisterUserDto registerUserDto, String registrationAdminKey);
 
-    String updateAndGetRefreshTokenByAuth(Authentication authentication, Duration expiration);
+    UserDto saveWithUserKey(RegisterUserDto registerUserDto, String registrationAdminKey);
 
-    String updateAndGetRefreshTokenByRefresh(String refreshToken, Duration expiration);
-
-    void clearRefreshToken(Authentication authentication);
+    void clearRefreshTokenByLogin(String login);
 
     UserDto update(RegisterUserDto registerUserDto, Long id);
 
     void delete(Long id);
+
+    void updateRefreshTokenByLogin(String login, String newRefreshToken, Timestamp newTokenExpirationDate);
+
+    boolean isUserHasPermission(Long id);
 }

@@ -1,5 +1,6 @@
 server:
   port : 8092
+  maxHttpHeaderSize: 102400
 spring:
   config:
     import: classpath:/config/auth.yaml
@@ -53,8 +54,22 @@ logging:
   level:
     hibernate:
       SQL: debug
+    org:
+      springframework:
+        web: trace
+      apache: trace
     type:
       descriptor:
         sql:
           BasicBinder: trace
     root: debug
+
+
+---
+server:
+  port : 8093
+spring:
+  config:
+    activate:
+      on-profile: no_docker
+    import: classpath:/config/database.yaml

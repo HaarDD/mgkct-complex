@@ -14,8 +14,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -30,13 +28,9 @@ public class RequestType {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 50)
-    @NotNull
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Size(max = 50)
-    @NotNull
     @Column(name = "readable_name", nullable = false, length = 50)
     private String readableName;
 

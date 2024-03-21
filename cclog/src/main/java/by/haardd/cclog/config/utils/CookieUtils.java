@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class CookieUtils {
 
     public static ResponseCookie generateCookie(String name, String value, String path, Duration maxAge) {
-        return ResponseCookie.from(name, value).path(path).maxAge(maxAge.getSeconds()).httpOnly(true).build();
+        return ResponseCookie.from(name, value).path(path).sameSite("Strict").maxAge(maxAge.getSeconds()).build();
     }
 
     @Nullable
@@ -29,6 +29,6 @@ public class CookieUtils {
     }
 
     public static ResponseCookie getCleanCookie(String cookieName, String path) {
-        return ResponseCookie.from(cookieName, "").path(path).build();
+        return ResponseCookie.from(cookieName, "").path(path).sameSite("Strict").maxAge(0).build();
     }
 }

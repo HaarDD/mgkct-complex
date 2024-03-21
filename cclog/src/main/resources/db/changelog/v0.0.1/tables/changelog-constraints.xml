@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet author="Maxim Galitskiy" id="constraints-1">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_request_types_fields_types_request_field_types_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="request_types_fields_types"
@@ -18,7 +18,7 @@
                                  referencedColumnNames="id" referencedTableName="request_field_types"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-2">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_request_types_fields_types_request_types_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="request_types_fields_types"
@@ -31,7 +31,7 @@
                                  referencedColumnNames="id" referencedTableName="request_types"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-3">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_request_users_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="requests"
@@ -40,11 +40,11 @@
         </preConditions>
         <addForeignKeyConstraint baseColumnNames="created_by_user_id" baseTableName="requests"
                                  constraintName="FK_request_users_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 onDelete="CASCADE" onUpdate="RESTRICT" referencedColumnNames="id"
                                  referencedTableName="users"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-4">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_requests_priorities_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="requests"
@@ -57,7 +57,7 @@
                                  referencedTableName="priorities"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-5">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_requests_request_types_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="requests"
@@ -70,7 +70,7 @@
                                  referencedColumnNames="id" referencedTableName="request_types"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-6">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_requests_statuses_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="requests"
@@ -83,7 +83,7 @@
                                  referencedTableName="statuses"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-7">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_roles_priorities_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="roles"
@@ -96,7 +96,7 @@
                                  referencedTableName="priorities"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-8">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_users_roles_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="users"
@@ -108,7 +108,7 @@
                                  referencedColumnNames="id" referencedTableName="roles"/>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="constraints-9">
+    <changeSet author="Maxim Galitskiy" id="constraints-FK_users_user_statuses_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyTableName="users"

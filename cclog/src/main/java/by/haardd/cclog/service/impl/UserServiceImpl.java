@@ -5,10 +5,12 @@ import by.haardd.cclog.dto.UserDto;
 import by.haardd.cclog.entity.User;
 import by.haardd.cclog.entity.enums.RoleNameEnum;
 import by.haardd.cclog.entity.enums.UserStatusEnum;
-import by.haardd.cclog.exception.types.ResourceNotFoundException;
-import by.haardd.cclog.exception.types.TokenExpiredException;
-import by.haardd.cclog.exception.types.WrongRegistrationCodeException;
-import by.haardd.cclog.mapper.UserMapper;
+import by.haardd.cclog.exception.types.extended.BackendResourceNotFoundException;
+import by.haardd.cclog.exception.types.extended.ResourceNotFoundException;
+import by.haardd.cclog.exception.types.extended.TokenInvalidException;
+import by.haardd.cclog.exception.types.extended.UserAlreadyExistsException;
+import by.haardd.cclog.exception.types.extended.WrongRegistrationCodeException;
+import by.haardd.cclog.mapper.user.UserMapper;
 import by.haardd.cclog.repository.RoleRepository;
 import by.haardd.cclog.repository.UserRepository;
 import by.haardd.cclog.repository.UserStatusRepository;
@@ -16,16 +18,14 @@ import by.haardd.cclog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -38,19 +38,22 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final String registrationAdminKey;
+    private final String registrationUserKey;
 
     public UserServiceImpl(RoleRepository roleRepository,
                            UserRepository userRepository,
                            UserStatusRepository userStatusRepository,
                            UserMapper userMapper,
                            PasswordEncoder passwordEncoder,
-                           @Value("${register.registration-admin-key}") String registrationAdminKey) {
+                           @Value("${register.registration-admin-key}") String registrationAdminKey,
+                           @Value("${register.registration-user-key}") String registrationUserKey) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.registrationAdminKey = registrationAdminKey;
         this.userStatusRepository = userStatusRepository;
+        this.registrationUserKey = registrationUserKey;
     }
 
     @Override
@@ -64,22 +67,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getByLogin(String login) {
+        return userMapper.toDto(userRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException("User was not found", login)));
+    }
+
+    @Override
+    public String getRefreshTokenByLogin(String login) {
+        return userRepository.findByLogin(login).orElseThrow(() -> new TokenInvalidException("Token was invalid!")).getRefreshToken();
+    }
+
+    @Override
+    public Timestamp getRefreshTokenExpirationDateByLogin(String login) {
+        return userRepository.findByLogin(login).orElseThrow(() -> new TokenInvalidException("Token was invalid!")).getRefreshTokenExpiration();
+    }
+
+    @Override
     @Transactional
-    public UserDto save(RegisterUserDto registerUserDto) {
-        return null;
+    public UserDto save(RegisterUserDto registerUserDto, RoleNameEnum roleName) {
+        return saveUser(registerUserDto, roleName);
     }
 
     @Override
     @Transactional
     public UserDto saveWithAdminKey(RegisterUserDto registerUserDto, String registrationAdminKey) {
-        if (!registrationAdminKey.equals(this.registrationAdminKey)) {
+        validateRegistrationKey(registrationAdminKey, this.registrationAdminKey);
+        return saveUser(registerUserDto, RoleNameEnum.ROLE_ENGINEER);
+    }
+
+    @Override
+    @Transactional
+    public UserDto saveWithUserKey(RegisterUserDto registerUserDto, String registrationUserKey) {
+        validateRegistrationKey(registrationUserKey, this.registrationUserKey);
+        return saveUser(registerUserDto, RoleNameEnum.ROLE_EMPLOYEE);
+    }
+
+    private void validateRegistrationKey(String providedKey, String expectedKey) {
+        log.info("providedKey: {}", providedKey);
+        if (!providedKey.equals(expectedKey)) {
             throw new WrongRegistrationCodeException("Registration code was wrong!");
+        }
+    }
+
+    private UserDto saveUser(RegisterUserDto registerUserDto, RoleNameEnum roleName) {
+        if (userRepository.existsByLogin(registerUserDto.getLogin())) {
+            throw new UserAlreadyExistsException("User with login '%s' already exists!".formatted(registerUserDto.getLogin()));
         }
 
         User user = userMapper.toEntity(registerUserDto, passwordEncoder);
-
-        user.setRole(roleRepository.findByName(RoleNameEnum.ROLE_ENGINEER)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found", RoleNameEnum.ROLE_ENGINEER.name())));
+        user.setRole(roleRepository.findByName(roleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found", roleName.name())));
         user.setUserStatus(userStatusRepository.findByName(UserStatusEnum.OK)
                 .orElseThrow(() -> new ResourceNotFoundException("User status not found", UserStatusEnum.OK.name())));
 
@@ -88,41 +124,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String updateAndGetRefreshTokenByAuth(Authentication authentication, Duration expiration) {
-        String login = authentication.getName();
-        User user = userRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException("User was not found by login", login));
-        String refreshToken = UUID.randomUUID().toString();
-        user.setRefreshToken(refreshToken);
-        user.setRefreshTokenExpiration(Timestamp.from(Instant.now().plus(expiration)));
+    public void updateRefreshTokenByLogin(String login, String newRefreshToken, Timestamp newTokenExpirationDate) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("User was not found by login", login));
+        user.setRefreshToken(newRefreshToken);
+        user.setRefreshTokenExpiration(newTokenExpirationDate);
         userRepository.save(user);
-        return refreshToken;
     }
 
     @Override
     @Transactional
-    public String updateAndGetRefreshTokenByRefresh(String refreshToken, Duration expiration) {
-        User user = userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new ResourceNotFoundException("User was not found by refresh", refreshToken));
-
-        Timestamp currentTimestamp = Timestamp.from(Instant.now());
-        if (user.getRefreshTokenExpiration().compareTo(currentTimestamp) > 0) {
-            String newRefreshToken = UUID.randomUUID().toString();
-            user.setRefreshToken(newRefreshToken);
-            user.setRefreshTokenExpiration(Timestamp.from(currentTimestamp.toInstant().plus(expiration)));
-        } else {
-            user.setRefreshToken(null);
-            user.setRefreshTokenExpiration(null);
-            throw new TokenExpiredException("Token was expired!");
-        }
-
-        userRepository.save(user);
-        return user.getRefreshToken();
-    }
-
-    @Override
-    @Transactional
-    public void clearRefreshToken(Authentication authentication) {
-        String login = authentication.getName();
+    public void clearRefreshTokenByLogin(String login) {
         User user = userRepository.findByLogin(login).orElseThrow(() -> {
             log.info("User was not found by login: {}", login);
             return new ResourceNotFoundException("User was not found by login", login);
@@ -132,17 +144,27 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
     @Override
     @Transactional
     public UserDto update(RegisterUserDto registerUserDto, Long id) {
-        return null;
+        return userMapper.toDto(userRepository.save(userMapper.partialUpdate(registerUserDto, userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User was not found", id.toString())), passwordEncoder)));
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
+        userRepository.delete(userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User was not found", id.toString())));
+    }
 
+    @Override
+    public boolean isUserHasPermission(Long id) {
+        Long specifiedId = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User was not found!", id.toString())).getId();
+        UserDetails authenticatedUserDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentAuthenticatedLogin = authenticatedUserDetails.getUsername();
+        User authenticatedUser = userRepository.findByLogin(currentAuthenticatedLogin)
+                .orElseThrow(() -> new BackendResourceNotFoundException("User was not found!", currentAuthenticatedLogin));
+        return authenticatedUser.getId().equals(specifiedId);
     }
 
 

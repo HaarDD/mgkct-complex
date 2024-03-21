@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface StatusService {
 
-    List<StatusDto> getAllByPageable(Pageable pageable);
+    List<StatusDto> getAll();
 
     StatusDto getById(Long id);
 

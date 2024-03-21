@@ -1,4 +1,4 @@
-package by.haardd.cclog.exception.types;
+package by.haardd.cclog.exception.types.extended;
 
 public class TokenExpiredException extends RuntimeException {
 

@@ -1,5 +1,6 @@
 package by.haardd.cclog.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 import javax.validation.constraints.NotNull;
@@ -9,6 +10,8 @@ import java.util.Set;
 
 @Value
 public class RequestFieldTypeDto implements Serializable {
+
+    Long id;
 
     @NotNull
     @Size(max = 50)
