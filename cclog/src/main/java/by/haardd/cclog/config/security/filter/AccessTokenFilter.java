@@ -5,6 +5,7 @@ import by.haardd.cclog.exception.types.extended.TokenInvalidException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +28,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @SneakyThrows
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         String jwt = jwtUtils.getJwtTokenFromCookies(request);
-        if (jwt != null && !jwt.isEmpty() && !jwt.isBlank()) {
+        if (!StringUtils.isEmpty(jwt)) {
             try {
                 UserDetails userDetails = jwtUtils.getTokenClaims(jwt);
 
