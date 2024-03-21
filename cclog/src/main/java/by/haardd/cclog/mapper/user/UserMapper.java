@@ -30,5 +30,5 @@ public interface UserMapper {
     UserDto toDto(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    User partialUpdate(RegisterUserDto userDto, @MappingTarget User user);
+    User partialUpdate(RegisterUserDto userDto, @MappingTarget User user, @Context PasswordEncoder passwordEncoder);
 }
