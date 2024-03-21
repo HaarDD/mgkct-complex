@@ -15,27 +15,27 @@ import java.sql.Timestamp;
 public class RegisterUserDto implements Serializable {
 
     @NotNull
-    @Pattern(regexp = "^[a-z0-9_-]{3,15}$", message = "Login must be alphanumeric string that may include _ and - having a length of 3 to 16 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]{3,15}$", message = "Login must be alphanumeric string that may include _ and - having a length of 3 to 16 characters")
     @Size(max = 50)
-    String login;
+    private String login;
 
     @NotNull
     @Pattern(regexp = "^.*(?=.*\\d)(?=.*[a-zA-Z])(?=.*[\\W_])\\S{8,}.*$", message = "The password must consist of at least 8 characters, one number, one letter and one special character.")
     @Size(max = 255)
-    String password;
+    private String password;
 
     @Size(max = 50)
     @Pattern(regexp = "^[а-яА-Яa-zA-Z]{2,20}$", message = "Firstname must be between 2 and 20 characters of russian and english alphabetic")
-    String firstName;
+    private String firstName;
 
     @Size(max = 50)
     @Pattern(regexp = "^[а-яА-Яa-zA-Z]{2,20}$", message = "Lastname must be between 2 and 20 characters of russian and english alphabetic")
-    String lastName;
+    private String lastName;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Timestamp createdAt;
+    private Timestamp createdAt;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Timestamp updatedAt;
+    private Timestamp updatedAt;
 
 }

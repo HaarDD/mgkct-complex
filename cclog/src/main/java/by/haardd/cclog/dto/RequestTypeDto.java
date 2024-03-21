@@ -1,5 +1,6 @@
 package by.haardd.cclog.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 import javax.validation.constraints.NotNull;
@@ -22,5 +23,5 @@ public class RequestTypeDto implements Serializable {
 
     String description;
 
-    Set<RequestFieldTypeDto> requestFieldTypes;
+    //TODO доступные поля
 }

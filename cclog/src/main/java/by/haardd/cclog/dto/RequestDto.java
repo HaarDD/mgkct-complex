@@ -1,5 +1,6 @@
 package by.haardd.cclog.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -12,9 +13,10 @@ import java.time.Instant;
 
 @Value
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestDto implements Serializable {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     Long id;
 
     @NotNull
@@ -38,7 +40,7 @@ public class RequestDto implements Serializable {
     RequestTypeDto requestType;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    RegisterUserDto createdByUser;
+    UserDto createdByUser;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     PriorityDto priority;
