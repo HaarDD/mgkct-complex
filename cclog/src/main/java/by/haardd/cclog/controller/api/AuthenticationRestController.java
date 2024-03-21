@@ -4,8 +4,10 @@ import by.haardd.cclog.config.utils.JwtUtils;
 import by.haardd.cclog.config.utils.RefreshTokenUtils;
 import by.haardd.cclog.config.security.AuthenticationRequest;
 import by.haardd.cclog.dto.RegisterUserDto;
+import by.haardd.cclog.dto.UserDto;
 import by.haardd.cclog.exception.types.extended.TokenInvalidException;
 import by.haardd.cclog.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +19,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,15 +29,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static by.haardd.cclog.config.SecurityConfiguration.AUTH_URL;
+import static by.haardd.cclog.config.SecurityConfiguration.CURRENT_USER_URL;
 import static by.haardd.cclog.config.SecurityConfiguration.LOGOUT_URL;
 import static by.haardd.cclog.config.SecurityConfiguration.REFRESH_URL;
-import static by.haardd.cclog.config.SecurityConfiguration.SIGNUP_ADMIN_WITH_CODE;
-import static by.haardd.cclog.config.SecurityConfiguration.SIGNUP_USER_WITH_CODE;
+import static by.haardd.cclog.config.SecurityConfiguration.SIGNUP_ADMIN_WITH_CODE_URL;
+import static by.haardd.cclog.config.SecurityConfiguration.SIGNUP_USER_WITH_CODE_URL;
 
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Authentication control")
 public class AuthenticationRestController {
 
     private final DaoAuthenticationProvider daoAuthenticationProvider;
@@ -64,13 +68,13 @@ public class AuthenticationRestController {
                 .body("User login successfully!");
     }
 
-    @PostMapping(SIGNUP_ADMIN_WITH_CODE)
+    @PostMapping(SIGNUP_ADMIN_WITH_CODE_URL)
     public ResponseEntity<String> registerEngineer(@Valid @RequestBody RegisterUserDto registerUserDto, @RequestParam(required = true) String code) {
         userService.saveWithAdminKey(registerUserDto, code);
         return ResponseEntity.ok("Admin registered successfully!");
     }
 
-    @PostMapping(SIGNUP_USER_WITH_CODE)
+    @PostMapping(SIGNUP_USER_WITH_CODE_URL)
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterUserDto registerUserDto, @RequestParam(required = true) String code) {
         userService.saveWithUserKey(registerUserDto, code);
         return ResponseEntity.ok("User registered successfully!");
@@ -99,7 +103,7 @@ public class AuthenticationRestController {
         }
         UserDetails userDetails;
         try {
-            userDetails = jwtUtils.getTokenClaims(jwtUtils.getJwtTokenFromCookies(request));
+            userDetails = jwtUtils.getTokenClaimsWithoutValidation(jwtUtils.getJwtTokenFromCookies(request));
             if (userDetails == null) throw new RuntimeException();
         } catch (Exception e) {
             throw new TokenInvalidException("Invalid token");
@@ -128,5 +132,13 @@ public class AuthenticationRestController {
                 .body("Tokens successfully updated");
 
     }
+
+    @GetMapping(CURRENT_USER_URL)
+    public UserDto currentAuth() {
+        UserDetails authenticatedUserDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentAuthenticatedLogin = authenticatedUserDetails.getUsername();
+        return userService.getByLogin(currentAuthenticatedLogin);
+    }
+
 
 }

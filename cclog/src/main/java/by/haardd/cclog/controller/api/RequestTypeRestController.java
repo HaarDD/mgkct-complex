@@ -1,7 +1,7 @@
 package by.haardd.cclog.controller.api;
 
-import by.haardd.cclog.dto.StatusDto;
-import by.haardd.cclog.service.StatusService;
+import by.haardd.cclog.dto.RequestTypeDto;
+import by.haardd.cclog.service.RequestTypeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,44 +20,45 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/statuses")
-@RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Statuses", description = "Status control")
-public class StatusRestController {
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/request_types")
+@Tag(name = "Request type", description = "Request types control")
+public class RequestTypeRestController {
 
-    private final StatusService statusService;
+    private final RequestTypeService requestTypeService;
 
     @GetMapping
-    private List<StatusDto> getAll(){
-        return statusService.getAll();
+    public List<RequestTypeDto> getAll() {
+        return requestTypeService.getAll();
     }
 
     @GetMapping("/{id}")
-    public StatusDto getById(@PathVariable Long id) {
-        return statusService.getById(id);
+    public RequestTypeDto getById(@PathVariable Long id) {
+        return requestTypeService.getById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public StatusDto create(@Valid @RequestBody StatusDto requestDto) {
-        return statusService.save(requestDto);
+    public RequestTypeDto create(@Valid @RequestBody RequestTypeDto requestDto) {
+        return requestTypeService.save(requestDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public StatusDto update(@Valid @RequestBody StatusDto requestDto, @PathVariable Long id) {
-        return statusService.update(requestDto, id);
+    public RequestTypeDto update(@Valid @RequestBody RequestTypeDto requestDto, @PathVariable Long id) {
+        return requestTypeService.update(requestDto, id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public void delete(@PathVariable Long id) {
-        statusService.delete(id);
+        requestTypeService.delete(id);
     }
+
 
 }

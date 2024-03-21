@@ -5,6 +5,7 @@ import by.haardd.cclog.config.pageable.OffsetLimitPageable;
 import by.haardd.cclog.config.pageable.PageableUtils;
 import by.haardd.cclog.dto.PriorityDto;
 import by.haardd.cclog.dto.RequestDto;
+import by.haardd.cclog.dto.RequestListWithTotal;
 import by.haardd.cclog.dto.StatusDto;
 import by.haardd.cclog.service.RequestService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,8 +40,8 @@ public class RequestRestController {
     private final RequestService requestService;
 
     @GetMapping
-    public List<RequestDto> getAll(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Long offset) {
-        return requestService.getAllByPageable(OffsetLimitPageable.of(PageableUtils.calcOffset(offset), PageableUtils.calcLimit(limit), Sort.by(Sort.Direction.ASC, "id")));
+    public RequestListWithTotal getAll(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Long offset) {
+        return new RequestListWithTotal(requestService.getTotalCount(), requestService.getAllByPageable(OffsetLimitPageable.of(PageableUtils.calcOffset(offset), PageableUtils.calcLimit(limit), Sort.by(Sort.Direction.ASC, "id"))));
     }
 
     @PostMapping
@@ -63,21 +64,21 @@ public class RequestRestController {
         requestService.delete(id);
     }
 
-    @PatchMapping("/comment/{id}")
+    @PatchMapping("/{id}/comment")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public void addEngineerComment(@Valid @Size(max = 300) @RequestBody String comment, @PathVariable Long id) {
         requestService.addEngineerComment(comment, id);
     }
 
-    @PatchMapping("/status/{id}")
+    @PatchMapping("/{id}/status")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public void setStatus(@RequestBody StatusDto statusDto, @PathVariable Long id) {
         requestService.setStatus(statusDto, id);
     }
 
-    @PatchMapping("/priority/{id}")
+    @PatchMapping("/{id}/priority")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public void setPriority(@RequestBody PriorityDto priorityDto, @PathVariable Long id) {
