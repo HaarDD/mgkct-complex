@@ -14,8 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 
 @Getter
@@ -29,13 +27,10 @@ public class Request {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "request_type_id", nullable = false)
     private RequestType requestType;
 
-    @Size(max = 50)
-    @NotNull
     @Column(name = "title", nullable = false, length = 50)
     private String title;
 
@@ -47,21 +42,17 @@ public class Request {
     @Column(name = "json")
     private String json;
 
-    @NotNull
     @Column(name = "deadline_date", nullable = false)
     private Timestamp deadlineDate;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdByUser;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "priority_id", nullable = false)
     private Priority priority;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;

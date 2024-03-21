@@ -13,8 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -29,19 +27,13 @@ public class Status {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 50)
-    @NotNull
     @Column(name = "name", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private StatusEnum name;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "readable_name", nullable = false)
     private String readableName;
 
-    @Size(max = 6)
-    @NotNull
     @Column(name = "color_hex", nullable = false, length = 6)
     private String colorHex;
 
