@@ -46,8 +46,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public final static String AUTH_URL = "/api/auth/login";
     public final static String LOGOUT_URL = "/api/auth/logout";
     public final static String REFRESH_URL = "/api/auth/refresh";
-    public final static String SIGNUP_ADMIN_WITH_CODE = "/api/auth/signup_admin";
-    public final static String SIGNUP_USER_WITH_CODE = "/api/auth/signup";
+    public final static String SIGNUP_ADMIN_WITH_CODE_URL = "/api/auth/signup_admin";
+    public final static String SIGNUP_USER_WITH_CODE_URL = "/api/auth/signup";
+    public final static String CURRENT_USER_URL = "/api/auth/current";
+
+    public static final String[] SWAGGER_AUTH_WHITELIST = new String[]{"/docs.html", "/swagger-ui*/**",
+            "/swagger-ui*/*swagger-initializer.js", "/swagger-ui.html", "/webjars/**",
+            "/v3/api-docs**", "/bus/v3/api-docs**", "/api/docs.yaml/**"};
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
@@ -73,10 +78,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                //.requiresChannel(channel ->  channel.anyRequest().requiresSecure())
                 .authorizeHttpRequests(
                         auths -> auths
-                                .antMatchers(AUTH_URL, REFRESH_URL, SIGNUP_ADMIN_WITH_CODE, SIGNUP_USER_WITH_CODE).permitAll()
+                                .antMatchers(SWAGGER_AUTH_WHITELIST).permitAll()
+                                .antMatchers(AUTH_URL, REFRESH_URL, SIGNUP_ADMIN_WITH_CODE_URL, SIGNUP_USER_WITH_CODE_URL).permitAll()
                                 .anyRequest().authenticated()
                                 .and()
                                 .addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
@@ -89,9 +94,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173","http://localhost:5174"));
+        config.setAllowedOrigins(List.of("http://localhost:3000"));;
 
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
 
         config.addAllowedHeader("Set-Cookie");
         config.addAllowedHeader("*");
