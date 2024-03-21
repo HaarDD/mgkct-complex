@@ -48,6 +48,7 @@ public class StatusServiceImpl implements StatusService {
     @Override
     @Transactional
     public void delete(Long id) {
-        statusRepository.deleteById(id);
+        statusRepository.delete(statusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Status was not found", id.toString())));
     }
 }

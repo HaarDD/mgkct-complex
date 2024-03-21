@@ -11,6 +11,7 @@ import by.haardd.cclog.exception.types.extended.ResourceNotFoundException;
 import by.haardd.cclog.mapper.request.RequestMapper;
 import by.haardd.cclog.repository.PriorityRepository;
 import by.haardd.cclog.repository.RequestRepository;
+import by.haardd.cclog.repository.RequestTypeRepository;
 import by.haardd.cclog.repository.StatusRepository;
 import by.haardd.cclog.repository.UserRepository;
 import by.haardd.cclog.service.RequestService;
@@ -29,12 +30,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Slf4j
 public class RequestServiceImpl implements RequestService {
+    private final RequestTypeRepository requestTypeRepository;
 
     private final PriorityRepository priorityRepository;
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final StatusRepository statusRepository;
     private final RequestMapper requestMapper;
+
+    @Override
+    public Long getTotalCount(){
+        return requestRepository.count();
+    }
 
     @Override
     public List<RequestDto> getAllByPageable(Pageable pageable) {

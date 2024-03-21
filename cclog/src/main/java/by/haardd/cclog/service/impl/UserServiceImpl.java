@@ -5,6 +5,7 @@ import by.haardd.cclog.dto.UserDto;
 import by.haardd.cclog.entity.User;
 import by.haardd.cclog.entity.enums.RoleNameEnum;
 import by.haardd.cclog.entity.enums.UserStatusEnum;
+import by.haardd.cclog.exception.types.extended.BackendResourceNotFoundException;
 import by.haardd.cclog.exception.types.extended.ResourceNotFoundException;
 import by.haardd.cclog.exception.types.extended.TokenInvalidException;
 import by.haardd.cclog.exception.types.extended.UserAlreadyExistsException;
@@ -17,6 +18,8 @@ import by.haardd.cclog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getByLogin(String login) {
+        return userMapper.toDto(userRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException("User was not found", login)));
+    }
+
+    @Override
     public String getRefreshTokenByLogin(String login) {
         return userRepository.findByLogin(login).orElseThrow(() -> new TokenInvalidException("Token was invalid!")).getRefreshToken();
     }
@@ -75,8 +83,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto save(RegisterUserDto registerUserDto) {
-        return null;
+    public UserDto save(RegisterUserDto registerUserDto, RoleNameEnum roleName) {
+        return saveUser(registerUserDto, roleName);
     }
 
     @Override
@@ -94,6 +102,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateRegistrationKey(String providedKey, String expectedKey) {
+        log.info("providedKey: {}", providedKey);
         if (!providedKey.equals(expectedKey)) {
             throw new WrongRegistrationCodeException("Registration code was wrong!");
         }
@@ -138,13 +147,25 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(RegisterUserDto registerUserDto, Long id) {
-        return null; //TODO
+        return userMapper.toDto(userRepository.save(userMapper.partialUpdate(registerUserDto, userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User was not found", id.toString())), passwordEncoder)));
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        //TODO
+        userRepository.delete(userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User was not found", id.toString())));
     }
-    
+
+    @Override
+    public boolean isUserHasPermission(Long id) {
+        Long specifiedId = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User was not found!", id.toString())).getId();
+        UserDetails authenticatedUserDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentAuthenticatedLogin = authenticatedUserDetails.getUsername();
+        User authenticatedUser = userRepository.findByLogin(currentAuthenticatedLogin)
+                .orElseThrow(() -> new BackendResourceNotFoundException("User was not found!", currentAuthenticatedLogin));
+        return authenticatedUser.getId().equals(specifiedId);
+    }
+
+
 }

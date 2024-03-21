@@ -2,7 +2,9 @@ package by.haardd.cclog.service;
 
 import by.haardd.cclog.dto.RegisterUserDto;
 import by.haardd.cclog.dto.UserDto;
+import by.haardd.cclog.entity.enums.RoleNameEnum;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -13,11 +15,13 @@ public interface UserService {
 
     UserDto getById(Long id);
 
+    UserDto getByLogin(String login);
+
     String getRefreshTokenByLogin(String login);
 
     Timestamp getRefreshTokenExpirationDateByLogin(String login);
 
-    UserDto save(RegisterUserDto registerUserDto);
+    UserDto save(RegisterUserDto registerUserDto, RoleNameEnum roleName);
 
     UserDto saveWithAdminKey(RegisterUserDto registerUserDto, String registrationAdminKey);
 
@@ -30,4 +34,6 @@ public interface UserService {
     void delete(Long id);
 
     void updateRefreshTokenByLogin(String login, String newRefreshToken, Timestamp newTokenExpirationDate);
+
+    boolean isUserHasPermission(Long id);
 }

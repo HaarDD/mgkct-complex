@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface RequestService {
 
+    Long getTotalCount();
+
     List<RequestDto> getAllByPageable(Pageable pageable);
 
     RequestDto getById(Long id);
