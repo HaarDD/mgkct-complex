@@ -54,8 +54,8 @@ public class RefreshTokenUtils {
 
     public void verifyRefreshToken(String login, String refreshTokenFromCookies) throws TokenInvalidException, TokenExpiredException {
         String existedRefreshToken = userService.getRefreshTokenByLogin(login);
-        if (!existedRefreshToken.equals(refreshTokenFromCookies)) {
-            throw new TokenInvalidException("Invalid token!");
+        if (existedRefreshToken == null || !existedRefreshToken.equals(refreshTokenFromCookies)) {
+            throw new TokenInvalidException("Invalid token! Reauthorization required");
         }
 
         Timestamp refreshTokenExpiration = userService.getRefreshTokenExpirationDateByLogin(login);
