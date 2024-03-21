@@ -110,14 +110,7 @@ public class JwtUtils {
             final SignedJWT decodedJWT = SignedJWT.parse(token);
 
             if (decodedJWT.verify(jwtVerifier) && isValid(jwtClaims = decodedJWT.getJWTClaimsSet())) {
-                String userName = decodedJWT.getJWTClaimsSet().getSubject();
-                final Stream<RoleNameEnum> userRights = this.<List<String>>getClaim(jwtClaims, JWT_PRIVILEGE_CLAIM)
-                        .map(list -> list.stream().map(RoleNameEnum::valueOf))
-                        .orElse(Stream.empty());
-                return new User(userName, StringUtils.EMPTY, userRights.map(RoleNameEnum::name)
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList())
-                );
+                return getUserDetails(jwtClaims, decodedJWT);
             } else {
                 throw new TokenInvalidException("Token was invalid!");
             }
@@ -125,6 +118,35 @@ public class JwtUtils {
             throw new TokenInvalidException("Token was invalid!");
         }
     }
+
+    @Nullable
+    public UserDetails getTokenClaimsWithoutValidation(String token) throws JOSEException {
+        final JWTClaimsSet jwtClaims;
+        try {
+            final SignedJWT decodedJWT = SignedJWT.parse(token);
+
+            if (decodedJWT.verify(jwtVerifier)) {
+                jwtClaims = decodedJWT.getJWTClaimsSet();
+                return getUserDetails(jwtClaims, decodedJWT);
+            } else {
+                throw new TokenInvalidException("Token was invalid!");
+            }
+        } catch (ParseException pe) {
+            throw new TokenInvalidException("Token was invalid!");
+        }
+    }
+
+    private UserDetails getUserDetails(JWTClaimsSet jwtClaims, SignedJWT decodedJWT) throws ParseException {
+        String userName = decodedJWT.getJWTClaimsSet().getSubject();
+        final Stream<RoleNameEnum> userRights = this.<List<String>>getClaim(jwtClaims, JWT_PRIVILEGE_CLAIM)
+                .map(list -> list.stream().map(RoleNameEnum::valueOf))
+                .orElse(Stream.empty());
+        return new User(userName, StringUtils.EMPTY, userRights.map(RoleNameEnum::name)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList())
+        );
+    }
+
 
     @SuppressWarnings("unchecked")
     private <T> Optional<T> getClaim(JWTClaimsSet jwtClaims, String claim) {
