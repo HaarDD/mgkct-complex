@@ -27,7 +27,7 @@
             <sqlCheck expectedResult="0"><![CDATA[
                 SELECT COUNT(*)
                 FROM statuses
-                WHERE statuses.name = 'PENDING'
+                WHERE statuses.name = 'DECLINED'
                 ]]>
             </sqlCheck>
         </preConditions>
@@ -44,7 +44,7 @@
             <sqlCheck expectedResult="0"><![CDATA[
                 SELECT COUNT(*)
                 FROM statuses
-                WHERE statuses.name = 'PENDING'
+                WHERE statuses.name = 'IN_WORK'
                 ]]>
             </sqlCheck>
         </preConditions>
@@ -61,7 +61,7 @@
             <sqlCheck expectedResult="0"><![CDATA[
                 SELECT COUNT(*)
                 FROM statuses
-                WHERE statuses.name = 'PENDING'
+                WHERE statuses.name = 'INFO_NEEDED'
                 ]]>
             </sqlCheck>
         </preConditions>
@@ -78,7 +78,7 @@
             <sqlCheck expectedResult="0"><![CDATA[
                 SELECT COUNT(*)
                 FROM statuses
-                WHERE statuses.name = 'PENDING'
+                WHERE statuses.name = 'COMPLETED'
                 ]]>
             </sqlCheck>
         </preConditions>

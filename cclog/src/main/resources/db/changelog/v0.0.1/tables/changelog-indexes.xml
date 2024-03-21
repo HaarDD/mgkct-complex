@@ -6,7 +6,7 @@
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
 
-    <changeSet author="Maxim Galitskiy" id="indexes-1">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_request_install_soft_users_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="requests" indexName="FK_request_install_soft_users_id"/>
@@ -17,7 +17,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="indexes-2">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_request_users_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="requests" indexName="FK_request_users_id"/>
@@ -28,7 +28,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="indexes-3">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_requests_priorities_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="requests" indexName="FK_requests_priorities_id"/>
@@ -39,7 +39,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="indexes-4">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_requests_request_types_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="requests" indexName="FK_requests_request_types_id"/>
@@ -50,7 +50,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="indexes-5">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_requests_statuses_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="requests" indexName="FK_requests_statuses_id"/>
@@ -61,7 +61,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="indexes-6">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_roles_priorities_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="roles" indexName="FK_roles_priorities_id"/>
@@ -72,7 +72,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="Maxim Galitskiy" id="indexes-7">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_users_roles_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="users" indexName="FK_users_roles_id"/>
@@ -84,7 +84,7 @@
     </changeSet>
 
 
-    <changeSet author="Maxim Galitskiy" id="indexes-8">
+    <changeSet author="Maxim Galitskiy" id="indexes-FK_users_user_statuses_id">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="users" indexName="FK_users_user_statuses_id"/>
